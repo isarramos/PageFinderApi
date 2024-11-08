@@ -21,4 +21,17 @@ public class BookReviewController : ControllerBase
         await _repository.InsertAsync(bookReview, cancellationToken);
         return Ok();
     }
+
+    [HttpGet("genres")]
+    public async Task<IActionResult> GetDistinctGenres(CancellationToken cancellationToken)
+    {
+        var allBookReviews = await _repository.GetAllAsync(cancellationToken);
+        var distinctGenres = allBookReviews
+            .Select(br => br.Genre)
+            .Where(g => !string.IsNullOrEmpty(g))
+            .Distinct()
+            .ToList();
+
+        return Ok(distinctGenres);
+    }
 }

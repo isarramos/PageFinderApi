@@ -37,4 +37,9 @@ public class BookRepository : IRepository<BookReview>
         return await cursor.FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<List<BookReview>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var cursor = _collection.Find(c => true);
+        return cursor.ToList(cancellationToken);
+    }
 }

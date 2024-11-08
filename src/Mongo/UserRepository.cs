@@ -36,4 +36,10 @@ public class UserRepository : IRepository<User>
         var cursor = await _collection.FindAsync(c => c.Id == id, cancellationToken: cancellationToken);
         return await cursor.FirstOrDefaultAsync(cancellationToken);
     }
+
+    public async Task<List<User>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var cursor = _collection.Find(c => true);
+        return cursor.ToList(cancellationToken);
+    }
 }
