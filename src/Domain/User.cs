@@ -8,6 +8,6 @@ public class User
     public string Password { get; set; }
     public string BirthDate { get; set; }
     public string Phone { get; set; }
-    public List<string> FavoriteGenres { get; set; } = [];
-    public List<string> FavoriteAuthors { get; set; } = [];
+    public string FavoriteGenres { get; set; }
+    public string FavoriteAuthors { get; set; }
 }

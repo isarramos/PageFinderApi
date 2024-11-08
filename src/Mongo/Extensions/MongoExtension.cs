@@ -1,5 +1,4 @@
 ﻿using Domain;
-using Domain.Repository;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -8,36 +7,42 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 
-namespace Mongo.Extensions
+namespace Mongo.Extensions;
+public static class MongoExtension
 {
-    public static class MongoExtension
+    public static IServiceCollection AddMongo(this IServiceCollection services, IConfiguration configuration)
     {
-        public static IServiceCollection AddMongo(this IServiceCollection services, IConfiguration configuration)
+        RegisterMongoMappings();
+        services.Configure<DatabaseSettings>(configuration.GetSection(nameof(DatabaseSettings)));
+        services.AddSingleton(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
+        services.AddSingleton<IMongoService, MongoService>();
+        services.AddRepositories();
+
+        return services;
+    }
+
+    public static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
+        services.AddTransient<IRepository<BookReview>, BookRepository>();
+        services.AddTransient<IRepository<User>, UserRepository>();
+        return services;
+    }
+
+    private static void RegisterMongoMappings()
+    {
+        BsonClassMap.RegisterClassMap<BookReview>(map =>
         {
-            RegisterMongoMappings();
-            services.Configure<DatabaseSettings>(configuration.GetSection(nameof(DatabaseSettings)));
-            services.AddSingleton(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
-            services.AddSingleton<IMongoService, MongoService>();
-            services.AddRepositories();
+            map.AutoMap();
+            map.MapProperty(x => x.Id)
+                .SetSerializer(new GuidSerializer(BsonType.String));
+        });
 
-            return services;
-        }
-
-        public static IServiceCollection AddRepositories(this IServiceCollection services)
+        BsonClassMap.RegisterClassMap<User>(map =>
         {
-            services.AddTransient<IRepository<BookReview>, BookRepository>();
-            return services;
-        }
+            map.AutoMap();
+            map.MapProperty(x => x.Id)
+                .SetSerializer(new GuidSerializer(BsonType.String));
+        });
 
-        private static void RegisterMongoMappings()
-        {
-            BsonClassMap.RegisterClassMap<BookReview>(map =>
-            {
-                map.AutoMap();
-                map.MapProperty(x => x.Id)
-                    .SetSerializer(new GuidSerializer(BsonType.String));
-            });
-
-        }
     }
 }

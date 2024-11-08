@@ -1,5 +1,4 @@
 using Domain;
-using Domain.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
