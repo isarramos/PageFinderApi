@@ -1,6 +1,6 @@
 ﻿namespace Domain
 {
-    public class Review
+    public class BookReview
     {
         public Guid Id { get; set; }
         public string Title { get; set; }

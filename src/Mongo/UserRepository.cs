@@ -6,34 +6,34 @@ using MongoDB.Driver;
 
 namespace Mongo
 {
-    public class Repository : IRepository<Review>
+    public class UserRepository : IRepository<User>
     {
         private readonly DatabaseSettings _settings;
-        private readonly IMongoCollection<Review> _collection;
+        private readonly IMongoCollection<User> _collection;
 
-        public Repository(IMongoService service, IOptions<DatabaseSettings> settings)
+        public UserRepository(IMongoService service, IOptions<DatabaseSettings> settings)
         {
             _settings = settings.Value;
-            _collection = service.Database.GetCollection<Review>(_settings.CollectionName);
+            _collection = service.Database.GetCollection<User>(_settings.UserCollectionName);
         }
 
-        public async Task InsertAsync(Review entity, CancellationToken cancellationToken)
+        public async Task InsertAsync(User entity, CancellationToken cancellationToken)
         {
             await _collection.InsertOneAsync(entity, cancellationToken: cancellationToken);
         }
 
-        public async Task UpdateAsync(Review entity, CancellationToken cancellationToken)
+        public async Task UpdateAsync(User entity, CancellationToken cancellationToken)
         {
-            var filter = Builders<Review>.Filter.Eq(c => c.Id, entity.Id);
+            var filter = Builders<User>.Filter.Eq(c => c.Id, entity.Id);
             await _collection.FindOneAndReplaceAsync(filter, entity, cancellationToken: cancellationToken);
         }
 
-        public async Task DeleteAsync(Review entity, CancellationToken cancellationToken)
+        public async Task DeleteAsync(User entity, CancellationToken cancellationToken)
         {
             await _collection.DeleteOneAsync(c => c.Id == entity.Id, cancellationToken);
         }
 
-        public async Task<Review> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<User> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             var cursor = await _collection.FindAsync(c => c.Id == id, cancellationToken: cancellationToken);
             return await cursor.FirstOrDefaultAsync(cancellationToken);

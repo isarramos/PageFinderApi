@@ -25,13 +25,13 @@ namespace Mongo.Extensions
 
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            services.AddTransient<IRepository<Review>, Repository>();
+            services.AddTransient<IRepository<BookReview>, BookRepository>();
             return services;
         }
 
         private static void RegisterMongoMappings()
         {
-            BsonClassMap.RegisterClassMap<Review>(map =>
+            BsonClassMap.RegisterClassMap<BookReview>(map =>
             {
                 map.AutoMap();
                 map.MapProperty(x => x.Id)
